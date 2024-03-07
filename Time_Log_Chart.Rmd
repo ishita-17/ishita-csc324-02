@@ -1,0 +1,27 @@
+---
+title: "time_log_chart"
+author: "Ishita Sarraf"
+date: "2024-03-07"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+time_log <- read.csv("https://raw.githubusercontent.com/ishita-17/ishita-csc324-02/main/time_log.csv")
+```
+
+
+```{r}
+ggplot(time_log, aes(x = Week, y = Time, fill = Activity)) +
+  geom_bar(stat="identity") +
+  labs(x = "Week", y = "Time Taken (in minutes)", fill = "Activity",
+       title = "Time Log Chart for Shiny App")
+```
+
