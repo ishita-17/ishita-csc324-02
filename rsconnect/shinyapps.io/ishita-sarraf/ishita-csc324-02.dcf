@@ -1,0 +1,13 @@
+name: ishita-csc324-02
+title: ishita-csc324-02
+username: ishita-sarraf
+account: ishita-sarraf
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 11424350
+bundleId: 8342794
+url: https://ishita-sarraf.shinyapps.io/ishita-csc324-02/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .RData|Dataset Description.docx|Dataset Description.pdf|Project_Plan_for_RShiny_app.docx|README.md|Release-of-liability.pdf|Screenshots-of-Visualizations.pdf
