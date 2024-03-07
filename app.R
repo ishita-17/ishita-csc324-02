@@ -8,18 +8,20 @@ library(leaflet)
 library(sf)
 library(fmsb)
 library(knitr)
+library(shinythemes)
 
 df <- read.csv("https://raw.githubusercontent.com/ishita-17/ishita-csc324-02/main/AI_index_db.csv")
-world <- read_sf('/Users/ishi/csc324-labs/world_shape/ne_50m_admin_0_countries.shx')
+world <- read_sf('/Users/ishi/ishita-csc324-02/world_shape/ne_50m_admin_0_countries.shx')
 
 
 ## Set up the UI object
 ui <- navbarPage(title= "AI Investment by 62 Countries",
+                 theme=shinytheme("cyborg"),
                  inverse = T,    #  inverse the color of navigation bar
-                 tabPanel("Bar Plot",
+                 tabPanel("Graphs",
                           sidebarLayout(position = "left",
                                         sidebarPanel(
-                                          selectizeInput(inputId = "X_axis", label = "X-axis", choices = c("Cluster", "Income.group")), 
+                                          selectizeInput(inputId = "X_axis", label = "X-axis", choices = c("Cluster", "Income.group", "Political.regime")), 
                                           selectInput(inputId = "check", label = "Y-Axis Scale", choices = c("Fill", "Stack"))), # option for user to decide Y-axis scale 
                                           
                                         mainPanel(
@@ -27,20 +29,28 @@ ui <- navbarPage(title= "AI Investment by 62 Countries",
                           ), 
                           sidebarLayout(position = "left",
                                         sidebarPanel(
-                                          selectizeInput(inputId = "bubble_size", label = "Size", choices = c("Talent", "Operating.Environment",
+                                          selectizeInput(inputId = "bubble_size", label = "Bubble Size", choices = c("Talent", "Operating.Environment",
                                                                                                               "Government.Strategy", "Commercial", "Total.score"))),
                                         
                                         mainPanel(
                                           plotlyOutput('bubble'))
                           ),
+                          sidebarLayout(position = "left",
+                                        sidebarPanel(
+                                          selectizeInput(inputId = "country", label = "Country", choices = unique(df$Country))), 
+                                        
+                                        mainPanel(
+                                          plotOutput('spider'),
+                                          tableOutput("table")),
+                                          
+                          )
                  ),
                  tabPanel("World Map",
-                              leafletOutput('map')
-                 )
-                                        
+                              leafletOutput('map'),
                           
-                 
+                 )
 )
+
 
 ## Set up the server function
 server <- function(input, output){
@@ -60,7 +70,7 @@ server <- function(input, output){
   
   myLabels <- paste("<strong>", df2$Country, "</strong>", "<br/>", 
                     "Total Score:", prettyNum(df2$Total.score, big.mark = ","))  # Adds commas to pop
-  myPopups <- paste("Political Regime: ", df2$Political.regime)
+  myPopups <- paste("Income Group: ", df2$Income.group)
   
   
   # creating map using Leaflet
@@ -94,12 +104,9 @@ server <- function(input, output){
   
   data3 <- reactive({
     df %>%
-      #mutate(Research = round(Research, 2)) %>%
-      #mutate(!!input$bubble_size := round(aes_string(input$bubble_size), 2)) %>%  
-      #mutate(Development = round(Development, 2)) %>%
       arrange(desc(!!input$bubble_size)) %>%
       mutate(Country = factor(Country)) %>%
-      mutate(text = paste0("Country: ", Country, "\n", input$bubble_size, ": ", aes_string(input$bubble_size), "\nResearch: ", Research, "\nDevelopment: ", Development, sep = "")) %>%
+      mutate(text = paste0("Country: ", Country, "\n", input$bubble_size, ": ", !!as.name(input$bubble_size), "\nResearch: ", Research, "\nDevelopment: ", Development, sep = "")) %>%
       select(Research, Development, Country, text, input$bubble_size)
   })
   
@@ -115,6 +122,30 @@ server <- function(input, output){
     ggplotly(p, tooltip = "text")
   
   })
+  
+  filteredData <- reactive({
+    df3 <- df[, !names(df) %in% c("Political.regime", "Income.group", "Cluster", "Region")]
+    subset(df3, Country == input$country)
+  })
+  
+  output$spider <- renderPlot({
+    values <- as.data.frame(filteredData()[, -1])
+    colnames(values) <- names(filteredData())[-1]
+    values2 <- rbind(max(values), min(values), values)
+    
+    radarchart(values2, axistype = 1, 
+               pcol = rgb(0.2, 0.5, 0.5, 0.9), pfcol = rgb(0.2, 0.5, 0.5, 0.5), plwd = 4,
+               cglcol = "grey", cglty = 1, axislabcol = "grey", caxislabels = seq(0, 20, 5), cglwd = 0.8,
+               vlcex = 0.8)
+    
+  })
+  
+  output$table <- renderTable({
+    table_data <- as.data.frame(filteredData()[, -1])
+    table_data
+    
+  })
+  
 }
 
 ## Build and run
