@@ -27,6 +27,9 @@ world <- read_sf('world_shape/ne_50m_admin_0_countries.shx')
 ui <- navbarPage(title= "AI Investment by 62 Countries",
                  theme=shinytheme("cyborg"),  # shiny theme
                  inverse = T,    #  inverse the color of navigation bar
+                 tabPanel("Overview",
+                          htmlOutput("text"),   # project description     
+                 ),
                  tabPanel("Graphs",
                           # Bar Plot
                           sidebarLayout(position = "left",
@@ -65,11 +68,47 @@ ui <- navbarPage(title= "AI Investment by 62 Countries",
 ## Set up the server function
 server <- function(input, output){
   
+  # output for Project Overview
+  output$text <- renderText({
+    "<div style='font-size: 16px; color: lightgrey;'>
+    <h3>Purpose </h3>
+    <p> The purpose of this RShiny app was created to investigate the AI investment by 62 countries. 
+    As AI becomes more and more powerful and relevant in today's world, it is important to look at its 
+    growth in various countries. My goal is to create visualizations that would help us look at different 
+    factors of a country and their investment in AI to identify more powerful countries.
+    </p>
+    <h3> Visualizations </h3>
+    <p> There are 3 different graphs and 1 world map as visualizations. <br> <br>
+        Graph 1: Bar Plot <br>
+        This visualization gives information about the countries' geographical regions 
+        and their income group, political power, and political regime. <br>
+        Graph 2: Bubble Plot <br>
+        This visualization gives us information about the countries' investment in R&D for AI, 
+        with the bubble size determined by various quantitative variables.  <br>
+        Graph 3: Spider Plot <br>
+        This visualization gives us information about each country's numerical scores for the 
+        quantitative variables. <br>
+        World Map: <br>
+        The interactive world map allows us to see the AI Global Rank (total score) and 
+        income group for each country. <br> <br>
+        As seen from all the visualizations, USA seemed to have gained 
+        the highest total score for AI investment. <br>
+    </p>
+    <h3> Audience </h3>
+    <p> The audience for this Shiny app can be any student or adult interested in 
+    learning about AI Investment by these 62 countries.
+    </p>
+    </div>"
+  })
+  
   # output for Map Instructions
   output$body_text <- renderText({
-    "<h3>Map Instructions</h3>
+    "<div style='font-size: 16px; color: lightgrey;'>
+    <h3>Map Instructions</h3>
     <p>1. Hover over each shaded country to see the country name with the Total Score <br>
-       2. Click on the country to see its Income Group</p>"
+       2. Click on the country to see its Income Group
+    </p>
+    </div>"
   })
   
   # setting up data frame for Leaflet Map
