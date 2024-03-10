@@ -1,0 +1,189 @@
+---
+title: "AI Investment of 62 Countries: An RShiny App"
+author: "Ishita Sarraf"
+date: "2024-03-09"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\newpage
+
+# Academic Honesty Statement \newline
+
+Name(s) of all authors: Ishita Sarraf \newline
+
+Assignment name: Individual Project \newline
+
+Assignment due date: March 11, 2024 \newline
+
+Written/online sources used: Mentioned in resources \newline
+
+Help obtained (Acknowledgments): Prof. Jimenez, Elijah (mentor) \newline
+
+“I/we confirm that the above list of sources is complete AND that I/we have not talked to anyone else about the solution to this problem.” \newline
+
+\newpage
+
+# Contents \newline
+
+1. Project Overview \newline
+2. Data Description \newline
+3. Insights \newline
+4. Data Cleaning \newline
+5. Visualization Designs \newline
+6. Possible Additions \newline
+7. References \newline
+8. Appendix \newline
+
+\newpage 
+
+## Project Overview \newline
+
+The *purpose* of this RShiny app was created to investigate the AI investment by 62 countries. As AI becomes more and more powerful and relevant in today's world, it is important to look at its growth in various countries. My *goal* is to create visualizations that would help us look at different factors of a country and their investment in AI to identify more powerful countries. \newline
+
+There are 3 different graphs and 1 world map as visualizations. \newline
+Graph 1: Bar Plot \newline
+This visualization gives information about the countries' geographical regions and their income group, political power, and political regime. \newline
+Graph 2: Bubble Plot \newline
+This visualization gives us information about the countries' investment in R&D for AI, with the bubble size determined by various quantitative variables.  \newline
+Graph 3: Spider Plot \newline
+This visualization gives us information about each country's numerical scores for the quantitative variables. \newline
+World Map: \newline
+The interactive world map allows us to see the *AI Global Rank* (total score) and income group for each country. \newline
+
+As seen from all the visualizations, USA seemed to have gained the highest total score for AI investment.
+\newline
+
+**Audience: ** The audience for this Shiny app can be any student or adult interested in learning about AI Investment by these 62 countries. \newline
+
+## Data Description \newline
+
+There are 2 datasets used in this project. The first is the dataset that consists of the AI investment for the 62 countries and the second is the dataset that has the spatial coordinates needed to create the map. \newline
+
+#### Dataset 1: \newline
+
+This dataset (62 rows x 13 columns) was collected from a Kaggle source [1] and consists of 13 indicator variables, out of which 8 are quantitative variables and 5 are categorical variables. The 8 quantitative variables were calculated by Tortoise Media [2] via weighting and summarizing 143 other indicators. \newline
+
+| Variable Name | Variable Type  | Description     |
+|:-------------:|:--------------:|:---------------:|
+| Country| character | name of country | 
+| Talent | double | indicator focuses on the availability of skilled practitioners for the provision of artificial intelligence solutions|
+| Infrastructure | double | indicator focuses on the availability of skilled practitioners for the provision of artificial intelligence solutions |
+| Operating.Environment | double | indicator focuses on the regulatory context, and public opinion surrounding artificial intelligence |
+| Research | double | indicator focuses on the extent of specialist research and researchers; investigating the amount of publications and citations in credible academic journals
+| Development | double | indicator focuses on the development of fundamental platforms and algorithms upon which innovative artificial intelligence projects rely |
+| Government.Strategy| double | indicator focuses on the depth of commitment from national government to artificial intelligence; investigating spending commitments and national strategies |
+| Commercial | double | indicator focuses on the level of startup activity, investment and business initiatives based on artificial intelligence |
+| Total.score | double | the AI global rank |
+| Region | character | region the country belongs to | 
+| Cluster | character | how powerful is the country politically |
+| Income.group | character | how much income the country has | 
+|Political.regime|character | what political policy does the country have|
+
+Here are the first 3 rows of the dataset. \newline
+
+```{r, echo = F}
+df <- read.csv("https://raw.githubusercontent.com/ishita-17/ishita-csc324-02/main/AI_index_db.csv")
+head(df, n =3)
+```
+
+
+
+#### Dataset 2:  \newline
+
+This dataset is a huge dataset (242 rows x 169 columns) that consists of all the country names in the world with their respective geographical spatial coordinates. It was collected by Natural Earth Data [3]. I used this dataset and performed a `left_join()` function to join the spatial data with the 62 countries I have in order to create the interactive world map using `leaflet()`.  \newline
+
+ 
+## Insights \newline
+
+I wanted to see what trends exist between countries and their different AI investments in the various quantitative and categorical variables. Based on the visualizations we can see the following: \newline
+1. USA has the highest value of investment in Research and Development (R&D), followed by China. \newline
+2. If a country has is a high income.group, it is not necessary that it has a high total score. For example- Italy comes under a `high` income group but its total score is 24.45 and India comes under a   `lower middle` income group and has a total score of 30.36. \newline
+
+## Data Cleaning \newline
+
+For creating of the map, I had to clean the data such that I could join the 2 datasets together, created color palettes for the map, created labels and popups that would make the map interactive, created polygon geometries, and finally, made the dataset reactive in order to appropriately use it with shiny. Using leaflet made it more easy for a user to zoom and move around in the map. \newline
+
+For creating the bar graph, I simply used the user input to plot the x-axis and used different `theme()` functions in `ggplot` to make the bar plot more easy to read. \newline
+
+For creating the bubble plot, I created the sizes using user inputs and added a label to make it informative for the user, and added different options for the bubble sizes for the user to make it more animated. I converted the bubble plot to an interactive plot using `plotly` so that a user could zoom and play around with the plot. \newline
+
+For creating the spider plot, I created plot using `radarChart()` so that I could accurately create the spider web and then edited the font sizes and colors to make it more readable. \newline
+
+I then combined all these visualizations and used them to create a shiny app [3]. 
+
+## Visualization Designs \newline
+
+To describe the visualizations I will use the `What-Why-How` Framework described in the book by Tamara Munzer [4].  \newline
+
+#### 1. Interactive Map \newline
+
+What- Spatial Geometry \newline
+Why - Query: Compare \newline
+This idiom was used to compare if the total score of a country can have any connection with the income group. \newline
+How - Using color (channel) and spatial region (mark) \newline
+
+#### 2. Bar Plot \newline
+
+What- Flat Table \newline
+Why - Analyze: Present \newline
+This idiom helps to present the information of region with income group, political power, and political regime. \newline
+How - Using color hue (channel) and area (mark) \newline
+
+#### 3. Bubble Plot \newline
+
+What- Multidimensional table \newline
+Why - Analyze: Discover \newline
+This idiom helps to discover the research and development of various countries and then see the effect of various elements - Talent, Operating Environment, Government Strategy, Commercial, Total.score \newline
+How - Using color saturation (channel) and area (mark) \newline
+
+#### 4. Spider Plot \newline
+
+What- Flat Table \newline
+Why - Analyze: Enjoy \newline
+This idiom is just to enjoy the look of a spider plot and to see the numeric variables displayed in a different way for each country. \newline
+How - Using area (channel) and containment (mark) \newline
+
+## Possible Additions \newline
+
+1. More visualizations that help us draw more insights into the AI Investment, for example - a graph that can depict which `regions` have `higher total scores`. \newline
+2. A better CSS framework that would make the website look more attractive. \newline
+
+## References
+
+[1] K. Meleshenko, May 2023, "AI Global Index," Source. [Online]. Available: https://www.kaggle.com/datasets/katerynameleshenko/ai-index \newline
+
+[2] Natural Earth, 2009-2024, "Admin 0- Countries," Source. [Online]. Available: https://www.naturalearthdata.com/downloads/50m-cultural-vectors/50m-admin-0-countries-2/  \newline
+
+[3] C. Beeley, *Web Application Development with R Using Shiny*, 2nd ed. Birmingham, UK: Packt Publishing, 2016. \newline
+
+[4] T. Munzer, *Visualization Analysis & Design*, New York, NY, USA: CRC Press, 2015. \newline
+
+\newpage
+
+## Appendix
+
+1. Time Log Chart \newline
+
+```{r, echo = F, out.width="500px"}
+knitr::include_graphics("/Users/ishi/csc324-labs/Time_Log_Chart.png")
+```
+
+2. Required for 100% \newline
+
+i) A particularly nice piece of code, for example, animations, extensions. \newline
+My code for the interactive map and the bubble plot \newline
+
+ii) Combine various datasets \newline
+I combine my AI dataset with the spatial dataset for creating the map by performing a left_join. 
+
+
+
+
+
+
+
+

@@ -10,6 +10,14 @@ library(fmsb)
 library(knitr)
 library(shinythemes)
 
+# Academic Honesty Statement
+# Name(s) of all authors: Ishita Sarraf
+# Assignment name: Individual Project
+# Assignment due date: March 11, 2024
+# Written/online sources used: CS Labs 
+# Help obtained (Acknowledgments): Prof. Jimenez, Elijah (mentor)
+# “I/we confirm that the above list of sources is complete AND that I/we have not talked to anyone else about the solution to this problem.”
+
 # Reading relevant files 
 df <- read.csv("https://raw.githubusercontent.com/ishita-17/ishita-csc324-02/main/AI_index_db.csv")
 world <- read_sf('world_shape/ne_50m_admin_0_countries.shx')
