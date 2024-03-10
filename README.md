@@ -17,3 +17,6 @@ The interactive world map allows us to see the *AI Global Rank* (total score) an
 As seen from all the visualizations, USA seemed to have gained the highest total score for AI investment.
 
 Audience: The audience for this Shiny app can be any student or adult interested in learning about AI Investment by these 62 countries. 
+
+The app can be found hosted on shinyapps.io: https://ishita-sarraf.shinyapps.io/ishita-csc324-02/
+
